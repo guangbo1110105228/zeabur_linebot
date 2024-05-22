@@ -1,0 +1,83 @@
+{
+    "type": "bubble",
+    "hero": {
+      "type": "image",
+      "url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQND7xaDN8za7OxvMfvEZMWHtOc94Y08xoA4cbntwfzLQ&s",
+      "size": "full",
+      "aspectRatio": "20:13",
+      "aspectMode": "cover",
+      "action": {
+        "type": "uri",
+        "uri": "http://linecorp.com/"
+      }
+    },
+    "body": {
+      "type": "box",
+      "layout": "vertical",
+      "contents": [
+        {
+          "type": "text",
+          "text": "學測大考中心",
+          "weight": "bold",
+          "size": "xl"
+        },
+        {
+          "type": "box",
+          "layout": "vertical",
+          "margin": "lg",
+          "spacing": "sm",
+          "contents": [
+            {
+              "type": "box",
+              "layout": "baseline",
+              "spacing": "sm",
+              "contents": [
+                {
+                  "type": "text",
+                  "text": "點擊觀看相關資訊!",
+                  "wrap": true,
+                  "color": "#666666",
+                  "size": "sm",
+                  "flex": 5
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "footer": {
+      "type": "box",
+      "layout": "vertical",
+      "spacing": "sm",
+      "contents": [
+        {
+          "type": "button",
+          "style": "link",
+          "height": "sm",
+          "action": {
+            "type": "uri",
+            "label": "Latest test",
+            "uri": "https://linecorp.com"
+          }
+        },
+        {
+          "type": "button",
+          "style": "link",
+          "height": "sm",
+          "action": {
+            "type": "uri",
+            "label": "Website",
+            "uri": "https://www.ceec.edu.tw/"
+          }
+        },
+        {
+          "type": "box",
+          "layout": "vertical",
+          "contents": [],
+          "margin": "sm"
+        }
+      ],
+      "flex": 0
+    }
+  }
