@@ -1,1 +1,2 @@
-web: gunicorn --worker-class eventlet -w 1 api.index:app
+web: python api/index.py
+

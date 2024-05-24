@@ -1,6 +1,4 @@
-Flask==2.0.3
-line-bot-sdk==1.19.0
-openai==0.27.0
-werkzeug==2.0.3
-gunicorn==20.1.0
-eventlet==0.30.2
+Flask==3.0.3
+line-bot-sdk==3.11.0
+openai==1.25.2
+gunicorn==22.0.0
