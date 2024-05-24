@@ -36,6 +36,10 @@ def GPT_response(text):
         logging.error(f"OpenAI Error: {e}")
         return "An error occurred while generating the response."
 
+@app.route("/", methods=['GET'])
+def home():
+    return "Hello, this is the home page!"
+
 @app.route("/callback", methods=['POST'])
 def callback():
     signature = request.headers['X-Line-Signature']
