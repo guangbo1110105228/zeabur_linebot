@@ -53,6 +53,7 @@ def callback():
     try:
         handler.handle(body, signature)
     except InvalidSignatureError:
+        app.logger.error("Invalid signature. Please check your channel access token/channel secret.")
         abort(400, description="Invalid signature. Please check your channel access token/channel secret.")
     except Exception as e:
         app.logger.error(f"Exception: {e}")
@@ -78,9 +79,13 @@ def handle_message(event):
             logging.error(f"Error while reading flex message file: {e}")
             line_bot_api.reply_message(reply_token, TextSendMessage(text="An error occurred while loading the flex message."))
     else:
-        gpt_answer = GPT_response(message)
-        logging.info(f"GPT-3 answer: {gpt_answer}")
-        line_bot_api.reply_message(reply_token, TextSendMessage(text=gpt_answer))
+        try:
+            gpt_answer = GPT_response(message)
+            logging.info(f"GPT-3 answer: {gpt_answer}")
+            line_bot_api.reply_message(reply_token, TextSendMessage(text=gpt_answer))
+        except Exception as e:
+            logging.error(f"Error in GPT response: {e}")
+            line_bot_api.reply_message(reply_token, TextSendMessage(text="An error occurred while generating the response."))
 
 if __name__ == "__main__":
     port = int(os.getenv('PORT', 5000))
