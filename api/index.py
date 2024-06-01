@@ -31,10 +31,14 @@ def GPT_response(text):
             temperature=0.5,
             max_tokens=500
         )
+        logging.info(f"GPT-3 response: {response}")
         return response['choices'][0]['text'].strip()
-    except Exception as e:
+    except openai.error.OpenAIError as e:
         logging.error(f"OpenAI Error: {e}")
-        return "An error occurred while generating the response."
+        return "An error occurred with OpenAI API."
+    except Exception as e:
+        logging.error(f"Unexpected error: {e}")
+        return "An unexpected error occurred."
 
 @app.route("/", methods=['GET'])
 def home():
@@ -57,6 +61,7 @@ def callback():
 def handle_message(event):
     reply_token = event.reply_token
     message = event.message.text
+    logging.info(f"Received message: {message}")
     if message == 'HI':
         try:
             with open('tofel.json', 'r', encoding='utf-8') as file:
@@ -73,6 +78,7 @@ def handle_message(event):
             line_bot_api.reply_message(reply_token, TextSendMessage(text="An error occurred while loading the flex message."))
     else:
         gpt_answer = GPT_response(message)
+        logging.info(f"GPT-3 answer: {gpt_answer}")
         line_bot_api.reply_message(reply_token, TextSendMessage(text=gpt_answer))
 
 if __name__ == "__main__":
