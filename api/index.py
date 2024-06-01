@@ -25,14 +25,15 @@ app = Flask(__name__)
 
 def GPT_response(text):
     try:
-        response = openai.Completion.create(
-            model="text-davinci-003",
-            prompt=text,
-            temperature=0.5,
-            max_tokens=500
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": text}
+            ]
         )
         logging.info(f"GPT-3 response: {response}")
-        return response['choices'][0]['text'].strip()
+        return response['choices'][0]['message']['content'].strip()
     except openai.error.OpenAIError as e:
         logging.error(f"OpenAI Error: {e}")
         return "An error occurred with OpenAI API."
