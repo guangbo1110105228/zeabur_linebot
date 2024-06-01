@@ -58,9 +58,19 @@ def handle_message(event):
     reply_token = event.reply_token
     message = event.message.text
     if message == 'HI':
-        with open('tofel.json', 'r', encoding='utf-8') as file:
-            flex_message = json.load(file)
-        line_bot_api.reply_message(reply_token, FlexSendMessage('Profile Card', flex_message))
+        try:
+            with open('tofel.json', 'r', encoding='utf-8') as file:
+                flex_message = json.load(file)
+            line_bot_api.reply_message(reply_token, FlexSendMessage('Profile Card', flex_message))
+        except FileNotFoundError:
+            logging.error("The tofel.json file was not found.")
+            line_bot_api.reply_message(reply_token, TextSendMessage(text="Error: Flex message file not found."))
+        except json.JSONDecodeError as e:
+            logging.error(f"JSON decode error: {e}")
+            line_bot_api.reply_message(reply_token, TextSendMessage(text="Error: Flex message file is not a valid JSON."))
+        except Exception as e:
+            logging.error(f"Error while reading flex message file: {e}")
+            line_bot_api.reply_message(reply_token, TextSendMessage(text="An error occurred while loading the flex message."))
     else:
         gpt_answer = GPT_response(message)
         line_bot_api.reply_message(reply_token, TextSendMessage(text=gpt_answer))
