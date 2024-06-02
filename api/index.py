@@ -40,7 +40,7 @@ def GPT_response(text):
     #     return "An error occurred with OpenAI API."
     except Exception as e:
         #logging.error(f"Unexpected error: {e}")
-        return "An unexpected error occurred."
+        return response.choices[0].message.content
 
 @app.route("/", methods=['GET'])
 def home():
