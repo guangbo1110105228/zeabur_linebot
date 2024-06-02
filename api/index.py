@@ -2,9 +2,8 @@ from flask import Flask, request, abort
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import *
-#from openai import OpenAI
+from openai import OpenAI
 import json
-import openai
 import logging
 import os
 
@@ -15,18 +14,19 @@ logging.basicConfig(level=logging.INFO)
 LINE_BOT_API = os.getenv('LINE_BOT_API')
 WEBHOOK_HANDLER = os.getenv('WEBHOOK_HANDLER')
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+client = OpenAI(api_key=OPENAI_API_KEY)
 
 # Initialize LineBot API and WebhookHandler with environment variables
 line_bot_api = LineBotApi(LINE_BOT_API)
 handler = WebhookHandler(WEBHOOK_HANDLER)
-openai.api_key = OPENAI_API_KEY
+#openai.api_key = OPENAI_API_KEY
 
 # Create a single Flask instance
 app = Flask(__name__)
 
 def GPT_response(text):
     try:
-        response = openai.ChatCompletion.create(
+        response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
