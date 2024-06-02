@@ -64,7 +64,7 @@ def handle_message(event):
     reply_token = event.reply_token
     message = event.message.text
     logging.info(f"Received message: {message}")
-    if message == 'HI':
+    if message == 'Hi':
         try:
             with open('tofel.json', 'r', encoding='utf-8') as file1, \
                  open('ielts.json', 'r', encoding='utf-8') as file2, \
