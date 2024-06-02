@@ -64,7 +64,7 @@ def handle_message(event):
     reply_token = event.reply_token
     message = event.message.text
     logging.info(f"Received message: {message}")
-    if message == 'Hi':
+    if message == 'HI':
         try:
             with open('tofel.json', 'r', encoding='utf-8') as file1, \
                  open('ielts.json', 'r', encoding='utf-8') as file2, \
@@ -102,4 +102,5 @@ def handle_message(event):
 if __name__ == "__main__":
     port = int(os.getenv('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
+
 
