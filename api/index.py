@@ -103,7 +103,7 @@ def handle_message(event):
             gpt_answer = GPT_response(message)
             line_bot_api.reply_message(reply_token, TextSendMessage(text="apple"))
         except Exception as e:
-            line_bot_api.reply_message(reply_token, TextSendMessage(text="An error occurred while generating the response."))
+            line_bot_api.reply_message(reply_token, TextSendMessage(text="bpple."))
 
 if __name__ == "__main__":
     port = int(os.getenv('PORT', 5000))
