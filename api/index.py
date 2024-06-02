@@ -1,5 +1,6 @@
 from flask import Flask, request, abort
-from linebot.v3.messaging import MessagingApi, WebhookHandler
+from linebot.v3.messaging import MessagingApi
+from linebot.v3.webhook import WebhookHandler
 from linebot.v3.exceptions import InvalidSignatureError
 from linebot.v3.models import TextSendMessage, FlexSendMessage, FollowEvent, MessageEvent
 from openai import OpenAI
@@ -98,11 +99,11 @@ def handle_message(event):
         except Exception as e:
             line_bot_api.reply_message(reply_token, TextSendMessage(text="An error occurred while loading the flex messages."))
     else:
-        #try:
+        try:
             gpt_answer = GPT_response(message)
             line_bot_api.reply_message(reply_token, TextSendMessage(text=gpt_answer))
-        #except Exception as e:
-            #line_bot_api.reply_message(reply_token, TextSendMessage(text="An error occurred while generating the response."))
+        except Exception as e:
+            line_bot_api.reply_message(reply_token, TextSendMessage(text="An error occurred while generating the response."))
 
 if __name__ == "__main__":
     port = int(os.getenv('PORT', 5000))
