@@ -35,9 +35,9 @@ def GPT_response(text):
         )
         logging.info(f"GPT-3 response: {response}")
         return response['choices'][0]['message']['content'].strip()
-    except openai.APIConnectionError as e:
-        #logging.error(f"OpenAI Error: {e}")
-        return "An error occurred with OpenAI API."
+    # except openai.APIConnectionError as e:
+    #     #logging.error(f"OpenAI Error: {e}")
+    #     return "An error occurred with OpenAI API."
     except Exception as e:
         #logging.error(f"Unexpected error: {e}")
         return "An unexpected error occurred."
