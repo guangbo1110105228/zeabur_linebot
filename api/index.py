@@ -36,10 +36,10 @@ def GPT_response(text):
         logging.info(f"GPT-3 response: {response}")
         return response['choices'][0]['message']['content'].strip()
     except openai.APIConnectionError as e:
-        logging.error(f"OpenAI Error: {e}")
+        #logging.error(f"OpenAI Error: {e}")
         return "An error occurred with OpenAI API."
     except Exception as e:
-        logging.error(f"Unexpected error: {e}")
+        #logging.error(f"Unexpected error: {e}")
         return "An unexpected error occurred."
 
 @app.route("/", methods=['GET'])
@@ -74,13 +74,13 @@ def handle_follow(event):
 
         line_bot_api.push_message(user_id, FlexSendMessage(alt_text="Information Cards", contents=carousel_message))
     except FileNotFoundError as e:
-        logging.error(f"The JSON file was not found: {e}")
+        #logging.error(f"The JSON file was not found: {e}")
         line_bot_api.push_message(user_id, TextSendMessage(text="Error: Flex message file not found."))
     except json.JSONDecodeError as e:
-        logging.error(f"JSON decode error: {e}")
+        #logging.error(f"JSON decode error: {e}")
         line_bot_api.push_message(user_id, TextSendMessage(text="Error: Flex message file is not valid JSON."))
     except Exception as e:
-        logging.error(f"Error while reading flex message file: {e}")
+        #logging.error(f"Error while reading flex message file: {e}")
         line_bot_api.push_message(user_id, TextSendMessage(text="An error occurred while loading the flex messages."))
     
     # 指示訊息
@@ -100,21 +100,21 @@ def handle_message(event):
 
             line_bot_api.reply_message(reply_token, FlexSendMessage(alt_text="Information Cards", contents=carousel_message))
         except FileNotFoundError as e:
-            logging.error(f"The JSON file was not found: {e}")
+            #logging.error(f"The JSON file was not found: {e}")
             line_bot_api.reply_message(reply_token, TextSendMessage(text="Error: Flex message file not found."))
         except json.JSONDecodeError as e:
-            logging.error(f"JSON decode error: {e}")
+            #logging.error(f"JSON decode error: {e}")
             line_bot_api.reply_message(reply_token, TextSendMessage(text="Error: Flex message file is not valid JSON."))
         except Exception as e:
-            logging.error(f"Error while reading flex message file: {e}")
+            #logging.error(f"Error while reading flex message file: {e}")
             line_bot_api.reply_message(reply_token, TextSendMessage(text="An error occurred while loading the flex messages."))
     else:
         try:
             gpt_answer = GPT_response(message)
-            logging.info(f"GPT-3 answer: {gpt_answer}")
+            #logging.info(f"GPT-3 answer: {gpt_answer}")
             line_bot_api.reply_message(reply_token, TextSendMessage(text=gpt_answer))
         except Exception as e:
-            logging.error(f"Error in GPT response: {e}")
+            #logging.error(f"Error in GPT response: {e}")
             line_bot_api.reply_message(reply_token, TextSendMessage(text="An error occurred while generating the response."))
 
 if __name__ == "__main__":
