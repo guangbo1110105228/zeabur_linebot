@@ -100,7 +100,7 @@ def handle_message(event):
     else:
         #try:
             gpt_answer = GPT_response(message)
-            line_bot_api.reply_message(reply_token, TextSendMessage(text=gpt_answer))
+            line_bot_api.reply_message(reply_token, TextSendMessage(text="apple"))
         #except Exception as e:
             #line_bot_api.reply_message(reply_token, TextSendMessage(text="An error occurred while generating the response."))
 
