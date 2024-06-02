@@ -2,6 +2,7 @@ from flask import Flask, request, abort
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import *
+#from openai import OpenAI
 import json
 import openai
 import logging
@@ -34,7 +35,7 @@ def GPT_response(text):
         )
         logging.info(f"GPT-3 response: {response}")
         return response['choices'][0]['message']['content'].strip()
-    except openai.error.OpenAIError as e:
+    except openai.APIConnectionError as e:
         logging.error(f"OpenAI Error: {e}")
         return "An error occurred with OpenAI API."
     except Exception as e:
