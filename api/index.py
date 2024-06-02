@@ -66,18 +66,30 @@ def handle_message(event):
     logging.info(f"Received message: {message}")
     if message == 'HI':
         try:
-            with open('tofel.json', 'r', encoding='utf-8') as file:
-                flex_message = json.load(file)
-            line_bot_api.reply_message(reply_token, FlexSendMessage('Profile Card', flex_message))
-        except FileNotFoundError:
-            logging.error("The tofel.json file was not found.")
-            line_bot_api.reply_message(reply_token, TextSendMessage(text="Error: Flex message file not found."))
+            with open('tofel.json', 'r', encoding='utf-8') as file1, \
+                 open('ielts.json', 'r', encoding='utf-8') as file2, \
+                 open('bigexam.json', 'r', encoding='utf-8') as file3:
+                
+                flex_message1 = json.load(file1)
+                flex_message2 = json.load(file2)
+                flex_message3 = json.load(file3)
+
+            messages = [
+                FlexSendMessage('TOFEL Profile Card', flex_message1),
+                FlexSendMessage('IELTS Profile Card', flex_message2),
+                FlexSendMessage('Big Exam Profile Card', flex_message3)
+            ]
+
+            line_bot_api.reply_message(reply_token, messages)
+        except FileNotFoundError as e:
+            logging.error(f"The JSON file was not found: {e}")
+            line_bot_api.reply_message(reply_token, TextSendMessage(text="Error: One or more Flex message files not found."))
         except json.JSONDecodeError as e:
             logging.error(f"JSON decode error: {e}")
-            line_bot_api.reply_message(reply_token, TextSendMessage(text="Error: Flex message file is not a valid JSON."))
+            line_bot_api.reply_message(reply_token, TextSendMessage(text="Error: One or more Flex message files are not valid JSON."))
         except Exception as e:
-            logging.error(f"Error while reading flex message file: {e}")
-            line_bot_api.reply_message(reply_token, TextSendMessage(text="An error occurred while loading the flex message."))
+            logging.error(f"Error while reading flex message files: {e}")
+            line_bot_api.reply_message(reply_token, TextSendMessage(text="An error occurred while loading the flex messages."))
     else:
         try:
             gpt_answer = GPT_response(message)
@@ -90,3 +102,4 @@ def handle_message(event):
 if __name__ == "__main__":
     port = int(os.getenv('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
+
