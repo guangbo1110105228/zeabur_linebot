@@ -68,29 +68,18 @@ def handle_follow(event):
     
     # 發送 JSON 文件
     try:
-        with open('tofel.json', 'r', encoding='utf-8') as file1, \
-             open('ielts.json', 'r', encoding='utf-8') as file2, \
-             open('bigexam.json', 'r', encoding='utf-8') as file3:
-            
-            flex_message1 = json.load(file1)
-            flex_message2 = json.load(file2)
-            flex_message3 = json.load(file3)
+        with open('carousel.json', 'r', encoding='utf-8') as file:
+            carousel_message = json.load(file)
 
-        messages = [
-            FlexSendMessage('TOFEL Profile Card', flex_message1),
-            FlexSendMessage('IELTS Profile Card', flex_message2),
-            FlexSendMessage('Big Exam Profile Card', flex_message3)
-        ]
-
-        line_bot_api.push_message(user_id, messages)
+        line_bot_api.push_message(user_id, FlexSendMessage(alt_text="Information Cards", contents=carousel_message))
     except FileNotFoundError as e:
         logging.error(f"The JSON file was not found: {e}")
-        line_bot_api.push_message(user_id, TextSendMessage(text="Error: One or more Flex message files not found."))
+        line_bot_api.push_message(user_id, TextSendMessage(text="Error: Flex message file not found."))
     except json.JSONDecodeError as e:
         logging.error(f"JSON decode error: {e}")
-        line_bot_api.push_message(user_id, TextSendMessage(text="Error: One or more Flex message files are not valid JSON."))
+        line_bot_api.push_message(user_id, TextSendMessage(text="Error: Flex message file is not valid JSON."))
     except Exception as e:
-        logging.error(f"Error while reading flex message files: {e}")
+        logging.error(f"Error while reading flex message file: {e}")
         line_bot_api.push_message(user_id, TextSendMessage(text="An error occurred while loading the flex messages."))
     
     # 指示訊息
@@ -105,29 +94,18 @@ def handle_message(event):
     logging.info(f"Received message: {message}")
     if message.upper() == 'HI':
         try:
-            with open('tofel.json', 'r', encoding='utf-8') as file1, \
-                 open('ielts.json', 'r', encoding='utf-8') as file2, \
-                 open('bigexam.json', 'r', encoding='utf-8') as file3:
-                
-                flex_message1 = json.load(file1)
-                flex_message2 = json.load(file2)
-                flex_message3 = json.load(file3)
+            with open('carousel.json', 'r', encoding='utf-8') as file:
+                carousel_message = json.load(file)
 
-            messages = [
-                FlexSendMessage('TOFEL Profile Card', flex_message1),
-                FlexSendMessage('IELTS Profile Card', flex_message2),
-                FlexSendMessage('Big Exam Profile Card', flex_message3)
-            ]
-
-            line_bot_api.reply_message(reply_token, messages)
+            line_bot_api.reply_message(reply_token, FlexSendMessage(alt_text="Information Cards", contents=carousel_message))
         except FileNotFoundError as e:
             logging.error(f"The JSON file was not found: {e}")
-            line_bot_api.reply_message(reply_token, TextSendMessage(text="Error: One or more Flex message files not found."))
+            line_bot_api.reply_message(reply_token, TextSendMessage(text="Error: Flex message file not found."))
         except json.JSONDecodeError as e:
             logging.error(f"JSON decode error: {e}")
-            line_bot_api.reply_message(reply_token, TextSendMessage(text="Error: One or more Flex message files are not valid JSON."))
+            line_bot_api.reply_message(reply_token, TextSendMessage(text="Error: Flex message file is not valid JSON."))
         except Exception as e:
-            logging.error(f"Error while reading flex message files: {e}")
+            logging.error(f"Error while reading flex message file: {e}")
             line_bot_api.reply_message(reply_token, TextSendMessage(text="An error occurred while loading the flex messages."))
     else:
         try:
@@ -141,5 +119,6 @@ def handle_message(event):
 if __name__ == "__main__":
     port = int(os.getenv('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
+
 
 
