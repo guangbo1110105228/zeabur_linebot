@@ -59,12 +59,51 @@ def callback():
         app.logger.error(f"Exception: {e}")
     return 'OK'
 
+# Handle FollowEvent
+@handler.add(FollowEvent)
+def handle_follow(event):
+    user_id = event.source.user_id
+    welcome_message = TextSendMessage(text="感謝您添加我為好友！這是一些有用的資源文件：")
+    line_bot_api.push_message(user_id, welcome_message)
+    
+    # 發送 JSON 文件
+    try:
+        with open('tofel.json', 'r', encoding='utf-8') as file1, \
+             open('ielts.json', 'r', encoding='utf-8') as file2, \
+             open('bigexam.json', 'r', encoding='utf-8') as file3:
+            
+            flex_message1 = json.load(file1)
+            flex_message2 = json.load(file2)
+            flex_message3 = json.load(file3)
+
+        messages = [
+            FlexSendMessage('TOFEL Profile Card', flex_message1),
+            FlexSendMessage('IELTS Profile Card', flex_message2),
+            FlexSendMessage('Big Exam Profile Card', flex_message3)
+        ]
+
+        line_bot_api.push_message(user_id, messages)
+    except FileNotFoundError as e:
+        logging.error(f"The JSON file was not found: {e}")
+        line_bot_api.push_message(user_id, TextSendMessage(text="Error: One or more Flex message files not found."))
+    except json.JSONDecodeError as e:
+        logging.error(f"JSON decode error: {e}")
+        line_bot_api.push_message(user_id, TextSendMessage(text="Error: One or more Flex message files are not valid JSON."))
+    except Exception as e:
+        logging.error(f"Error while reading flex message files: {e}")
+        line_bot_api.push_message(user_id, TextSendMessage(text="An error occurred while loading the flex messages."))
+    
+    # 指示訊息
+    instruction_message = TextSendMessage(text="如果您需要這些資訊，請隨時輸入 'HI' 來獲取。")
+    line_bot_api.push_message(user_id, instruction_message)
+
+# Handle MessageEvent
 @handler.add(MessageEvent)
 def handle_message(event):
     reply_token = event.reply_token
     message = event.message.text
     logging.info(f"Received message: {message}")
-    if message == 'HI':
+    if message.upper() == 'HI':
         try:
             with open('tofel.json', 'r', encoding='utf-8') as file1, \
                  open('ielts.json', 'r', encoding='utf-8') as file2, \
