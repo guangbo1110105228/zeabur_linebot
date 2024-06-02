@@ -22,20 +22,21 @@ handler = WebhookHandler(WEBHOOK_HANDLER)
 
 # Create a single Flask instance
 app = Flask(__name__)
-
 def GPT_response(text):
     try:
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
-                {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": text}
-            ]
+            {
+            "role": "user",
+            "content": "Say this is a test",
+            },
+            ],
         )
-        logging.info(f"GPT-3 response: {response}")
+        logging.info(f"GPT-3 response: {response.choices[0].message.content}")
         return response['choices'][0]['message']['content'].strip()
     except Exception as e:
-        return "An error occurred while generating the response."
+        return "gpt error."
 
 @app.route("/", methods=['GET'])
 def home():
@@ -98,12 +99,13 @@ def handle_message(event):
         except Exception as e:
             line_bot_api.reply_message(reply_token, TextSendMessage(text="An error occurred while loading the flex messages."))
     else:
-        #try:
+        try:
             gpt_answer = GPT_response(message)
             line_bot_api.reply_message(reply_token, TextSendMessage(text="apple"))
-        #except Exception as e:
-            #line_bot_api.reply_message(reply_token, TextSendMessage(text="An error occurred while generating the response."))
+        except Exception as e:
+            line_bot_api.reply_message(reply_token, TextSendMessage(text="An error occurred while generating the response."))
 
 if __name__ == "__main__":
     port = int(os.getenv('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
+# 
