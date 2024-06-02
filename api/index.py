@@ -7,7 +7,7 @@ import json
 import logging
 import os
 
-# gets API Key from environment variable OPENAI_API_KEY
+# Setup logging
 logging.basicConfig(level=logging.INFO)
 
 # Load environment variables
@@ -23,18 +23,19 @@ handler = WebhookHandler(WEBHOOK_HANDLER)
 # Create a single Flask instance
 app = Flask(__name__)
 
-# Non-streaming:
-print("----- standard request -----")
-completion = client.chat.completions.create(
-    model="gpt-4",
-    messages=[
-        {
-            "role": "user",
-            "content": "Say this is a test",
-        },
-    ],
-)
-print(completion.choices[0].message.content)
+def GPT_response(text):
+    try:
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": text}
+            ]
+        )
+        logging.info(f"GPT-3 response: {response}")
+        return response['choices'][0]['message']['content'].strip()
+    except Exception as e:
+        return "An error occurred while generating the response."
 
 @app.route("/", methods=['GET'])
 def home():
@@ -54,6 +55,7 @@ def callback():
         app.logger.error(f"Exception: {e}")
     return 'OK'
 
+# Handle FollowEvent
 @handler.add(FollowEvent)
 def handle_follow(event):
     user_id = event.source.user_id
@@ -77,7 +79,7 @@ def handle_follow(event):
     instruction_message = TextSendMessage(text="如果您需要這些資訊，請隨時輸入 'HI' 來獲取。")
     line_bot_api.push_message(user_id, instruction_message)
 
-
+# Handle MessageEvent
 @handler.add(MessageEvent)
 def handle_message(event):
     reply_token = event.reply_token
@@ -101,8 +103,7 @@ def handle_message(event):
             line_bot_api.reply_message(reply_token, TextSendMessage(text=gpt_answer))
         except Exception as e:
             line_bot_api.reply_message(reply_token, TextSendMessage(text="An error occurred while generating the response."))
-            
-            
+
 if __name__ == "__main__":
     port = int(os.getenv('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
