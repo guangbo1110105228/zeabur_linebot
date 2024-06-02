@@ -1,7 +1,7 @@
 from flask import Flask, request, abort
-from linebot import LineBotApi, WebhookHandler
-from linebot.exceptions import InvalidSignatureError
-from linebot.models import *
+from linebot.v3.messaging import MessagingApi, WebhookHandler
+from linebot.v3.exceptions import InvalidSignatureError
+from linebot.v3.models import TextSendMessage, FlexSendMessage, FollowEvent, MessageEvent
 from openai import OpenAI
 import json
 import logging
@@ -11,14 +11,14 @@ import os
 logging.basicConfig(level=logging.INFO)
 
 # Load environment variables
-LINE_BOT_API = os.getenv('LINE_BOT_API')
-WEBHOOK_HANDLER = os.getenv('WEBHOOK_HANDLER')
+LINE_BOT_API_KEY = os.getenv('LINE_BOT_API')
+WEBHOOK_HANDLER_SECRET = os.getenv('WEBHOOK_HANDLER')
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 client = OpenAI(api_key=OPENAI_API_KEY)
 
 # Initialize LineBot API and WebhookHandler with environment variables
-line_bot_api = LineBotApi(LINE_BOT_API)
-handler = WebhookHandler(WEBHOOK_HANDLER)
+line_bot_api = MessagingApi(LINE_BOT_API_KEY)
+handler = WebhookHandler(WEBHOOK_HANDLER_SECRET)
 
 # Create a single Flask instance
 app = Flask(__name__)
@@ -98,11 +98,11 @@ def handle_message(event):
         except Exception as e:
             line_bot_api.reply_message(reply_token, TextSendMessage(text="An error occurred while loading the flex messages."))
     else:
-        #try:
+        try:
             gpt_answer = GPT_response(message)
             line_bot_api.reply_message(reply_token, TextSendMessage(text=gpt_answer))
-        #except Exception as e:
-            #line_bot_api.reply_message(reply_token, TextSendMessage(text="An error occurred while generating the response."))
+        except Exception as e:
+            line_bot_api.reply_message(reply_token, TextSendMessage(text="An error occurred while generating the response."))
 
 if __name__ == "__main__":
     port = int(os.getenv('PORT', 5000))
