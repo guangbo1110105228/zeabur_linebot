@@ -6,7 +6,14 @@ from selenium.webdriver.support import expected_conditions as EC
 import time
 
 def get_chw_info():
-    driver = webdriver.Chrome()
+    options = webdriver.ChromeOptions()
+    options.binary_location = "/app/.apt/usr/bin/google-chrome"
+    options.add_argument('--disable-gpu')
+    options.add_argument('--no-sandbox')
+    options.add_argument('--headless')
+    options.add_argument('--disable-dev-shm-usage')
+
+    driver = webdriver.Chrome(executable_path='/app/.chromedriver/bin/chromedriver', options=options)
     driver.get("https://www.toeic.com.tw/toeic/listening-reading/registration/test-dates/")
 
     @contextlib.contextmanager
