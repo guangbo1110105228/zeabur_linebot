@@ -1,5 +1,4 @@
 import contextlib
-import pywintypes
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -11,13 +10,13 @@ def get_toefl_info():
     driver.get("https://v2.ereg.ets.org/ereg/public/workflowmanager/schlWorkflow?_p=TEL")
 
     @contextlib.contextmanager
-    def suppress_usb_errors():
+    def suppress_errors():
         try:
             yield
-        except pywintypes.error:
-            print("pywintypes.error occurred")
+        except Exception as e:
+            print(f"Error occurred: {e}")
 
-    with suppress_usb_errors():
+    with suppress_errors():
         try:
             button = WebDriverWait(driver, 10).until(
                 EC.presence_of_element_located((By.XPATH, "//button[contains(text(), 'I Agree')]"))
@@ -62,7 +61,8 @@ def get_toefl_info():
 
             return date_info, direction_link
         
-        except pywintypes.error:
+        except Exception as e:
+            print(f"Error occurred: {e}")
             return None, None
         finally:
             driver.quit()
