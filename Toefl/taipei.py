@@ -33,13 +33,13 @@ def get_toefl_info():
                 EC.presence_of_element_located((By.XPATH, "//button[contains(text(), 'I Agree')]"))
             )
             button.click()
-            time.sleep(2)
+            #time.sleep(2)
             
             button = WebDriverWait(driver, 10).until(
                 EC.presence_of_element_located((By.XPATH, "//button[contains(text(), 'Register for this test')]"))
             )
             button.click()
-            time.sleep(2)
+            #time.sleep(2)
             
             input_box = WebDriverWait(driver, 10).until(
                 EC.presence_of_element_located((By.ID, "location"))
@@ -50,13 +50,13 @@ def get_toefl_info():
                 EC.element_to_be_clickable((By.XPATH, "//li[contains(text(), 'Taipei, 台灣')]"))
             )
             menu_item.click()
-            time.sleep(2)
+            #time.sleep(2)
             
             search_button = WebDriverWait(driver, 10).until(
                 EC.element_to_be_clickable((By.XPATH, "//button[contains(@onclick, 'searchResults')]"))
             )
             search_button.click()
-            time.sleep(2)
+            #time.sleep(2)
 
             WebDriverWait(driver, 10).until(
                 EC.presence_of_element_located((By.XPATH, "//div[contains(@aria-label, 'is available')]"))
