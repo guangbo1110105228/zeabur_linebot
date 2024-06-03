@@ -3,10 +3,19 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.service import Service as ChromeService
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.options import Options
 import time
 
 def get_toefl_info():
-    driver = webdriver.Chrome()
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--disable-gpu")
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+
+    driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=chrome_options)
     driver.get("https://v2.ereg.ets.org/ereg/public/workflowmanager/schlWorkflow?_p=TEL")
 
     @contextlib.contextmanager
@@ -68,8 +77,10 @@ def get_toefl_info():
             driver.quit()
 
 # 测试函数
-date_info, direction_link = get_toefl_info()
-if date_info and direction_link:
-    print(f"最新考試日期: {date_info}\n地區位置: {direction_link}")
-else:
-    print("无法获取最新考试信息。")
+if __name__ == "__main__":
+    date_info, direction_link = get_toefl_info()
+    if date_info and direction_link:
+        print(f"最新考試日期: {date_info}\n地區位置: {direction_link}")
+    else:
+        print("无法获取最新考试信息。")
+
