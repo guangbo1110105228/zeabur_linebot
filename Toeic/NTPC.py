@@ -4,19 +4,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
-from selenium.webdriver.chrome.service import Service as ChromeService
-from selenium.webdriver.chrome.options import Options
 
 def get_ntpc_info():
-    chrome_options = Options()
-    chrome_options.add_argument("--headless")
-    chrome_options.add_argument("--disable-gpu")
-    chrome_options.add_argument("--no-sandbox")
-    chrome_options.add_argument("--disable-dev-shm-usage")
-    chrome_options.binary_location = "/app/.apt/usr/bin/google-chrome"
-
-    chromedriver_path = "/app/.chromedriver/bin/chromedriver"
-    driver = webdriver.Chrome(service=ChromeService(chromedriver_path), options=chrome_options)
+    driver = webdriver.Chrome()
     driver.get("https://www.toeic.com.tw/toeic/listening-reading/registration/test-dates/")
 
     @contextlib.contextmanager
@@ -46,51 +36,50 @@ def get_ntpc_info():
                     date_elements = date_info_element.find_elements(By.TAG_NAME, 'span')
                     month = date_elements[0].text.strip()
                     day = date_elements[2].text.strip()
+                    exam_date = f"{month}/{day}"
 
                     registration_cell = WebDriverWait(driver, 10).until(
                         EC.visibility_of_element_located((By.XPATH, "//td[@data-title='報名期間'][1]"))
                     )
                     date_spans = registration_cell.find_elements(By.TAG_NAME, 'span')
-                    registration_period_text = ' '.join(span.text.strip() for span in date_spans[:3])
+                    registration_period = ' '.join(span.text.strip() for span in date_spans[:3])
 
-                    additional_registration_period_text = "無追加報名期間"
                     try:
                         additional_registration_cell = registration_cell.find_element(By.XPATH, ".//div[@data-title='追加報名期間']")
                         additional_date_spans = additional_registration_cell.find_elements(By.TAG_NAME, 'span')
-                        additional_registration_period_text = ' '.join(span.text.strip() for span in additional_date_spans[:3])
+                        additional_registration_period = ' '.join(span.text.strip() for span in additional_date_spans[:3])
                     except Exception:
-                        pass
+                        additional_registration_period = "無追加報名期間"
 
                     online_registration_cell = table.find_element(By.XPATH, ".//td[@data-title='線上報名']")
                     registration_status_elements = online_registration_cell.find_elements(By.XPATH, ".//p[@class='table-status']")
                     if registration_status_elements:
+                        registration_status = "報名截止"
                         return {
-                            "exam_date": f"{month}/{day}",
-                            "registration_period": registration_period_text,
-                            "additional_registration_period": additional_registration_period_text,
-                            "registration_status": "報名截止"
+                            'exam_date': exam_date,
+                            'registration_period': registration_period,
+                            'additional_registration_period': additional_registration_period,
+                            'registration_status': registration_status
                         }
                     else:
                         registration_link = online_registration_cell.find_element(By.TAG_NAME, 'a')
                         registration_url = registration_link.get_attribute("href")
                         return {
-                            "exam_date": f"{month}/{day}",
-                            "registration_period": registration_period_text,
-                            "additional_registration_period": additional_registration_period_text,
-                            "registration_status": registration_url
+                            'exam_date': exam_date,
+                            'registration_period': registration_period,
+                            'additional_registration_period': additional_registration_period,
+                            'registration_status': f"線上報名連結: {registration_url}"
                         }
-
                 except Exception as e:
-                    print('Error:', e)
                     return None
 
             for table in tables:
                 info = process_table(table)
                 if info:
                     return info
+            return None
 
         except Exception as e:
-            print('Error:', e)
             return None
 
         finally:
@@ -99,13 +88,3 @@ def get_ntpc_info():
     with GetTopic():
         pass
 
-# 测试函数
-if __name__ == "__main__":
-    info = get_ntpc_info()
-    if info:
-        print(f"考試日期: {info['exam_date']}")
-        print(f"報名期間: {info['registration_period']}")
-        print(f"追加報名期間: {info['additional_registration_period']}")
-        print(f"報名狀態: {info['registration_status']}")
-    else:
-        print("无法获取考试信息。")
