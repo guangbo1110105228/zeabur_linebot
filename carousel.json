@@ -61,9 +61,10 @@
               "action": {
                 "type": "uri",
                 "label": "Latest test",
-                "uri": "https://linecorp.com"
+                "uri": "https://xiaoshengli.pages.dev/gsatcountdown"
               }
-            },
+            }
+            ,
             {
               "type": "button",
               "style": "link",
@@ -142,9 +143,9 @@
               "style": "link",
               "height": "sm",
               "action": {
-                "type": "uri",
-                "label": "Latest test",
-                "uri": "https://linecorp.com"
+                "type": "message",
+                "label": "Latest Test",
+                "text": "The latest ielts test centers and times."
               }
             },
             {
@@ -225,11 +226,12 @@
               "style": "link",
               "height": "sm",
               "action": {
-                "type": "uri",
-                "label": "Latest test",
-                "uri": "https://linecorp.com"
+                "type": "message",
+                "label": "Latest Test",
+                "text": "Please provide the latest TOEFL test centers and times."
               }
-            },
+            }
+            ,
             {
               "type": "button",
               "style": "link",

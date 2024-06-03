@@ -56,9 +56,9 @@
           "style": "link",
           "height": "sm",
           "action": {
-            "type": "uri",
-            "label": "Latest test",
-            "uri": "https://linecorp.com"
+            "type": "message",
+            "label": "Latest Test",
+            "text": "The latest ielts test centers and times."
           }
         },
         {
