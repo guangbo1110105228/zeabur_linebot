@@ -7,6 +7,11 @@ from openai import OpenAI
 import json
 import os
 
+# 导入各个爬虫文件中的函数
+from Toefl.kaos import get_toefl_info as get_kaohsiung_info
+from Toefl.taichung import get_toefl_info as get_taichung_info
+from Toefl.taipei import get_toefl_info as get_taipei_info
+
 # Setup logging
 logging.basicConfig(level=logging.INFO)
 
@@ -103,8 +108,25 @@ def handle_message(event):
         except Exception as e:
             line_bot_api.reply_message(reply_token, TextSendMessage(text="An error occurred while loading the flex messages."))
     elif message == "Please provide the latest TOEFL test centers and times.":
-        toefl_info = "Here are the latest TOEFL test centers and times:\n1. Center A - June 10, 2024\n2. Center B - June 15, 2024\n3. Center C - June 20, 2024"
-        line_bot_api.reply_message(reply_token, TextSendMessage(text=toefl_info))
+        kaohsiung_info = get_kaohsiung_info()
+        taichung_info = get_taichung_info()
+        taipei_info = get_taipei_info()
+        
+        response_message = "最新考試資訊：\n\n"
+        
+        if kaohsiung_info[0] and kaohsiung_info[1]:
+            response_message += f"高雄市：\n日期: {kaohsiung_info[0]}\n地區位置: {kaohsiung_info[1]}\n\n"
+        
+        if taichung_info[0] and taichung_info[1]:
+            response_message += f"台中市：\n日期: {taichung_info[0]}\n地區位置: {taichung_info[1]}\n\n"
+        
+        if taipei_info[0] and taipei_info[1]:
+            response_message += f"台北市：\n日期: {taipei_info[0]}\n地區位置: {taipei_info[1]}\n\n"
+
+        if not (kaohsiung_info[0] and kaohsiung_info[1]) and not (taichung_info[0] and taichung_info[1]) and not (taipei_info[0] and taipei_info[1]):
+            response_message = "无法获取最新考试信息。"
+        
+        line_bot_api.reply_message(reply_token, TextSendMessage(text=response_message))
     elif message == "The latest IELTS test centers and times.":
         ielts_info = "Here are the latest IELTS test centers and times:\n1. Center D - June 12, 2024\n2. Center E - June 17, 2024\n3. Center F - June 22, 2024"
         line_bot_api.reply_message(reply_token, TextSendMessage(text=ielts_info))
