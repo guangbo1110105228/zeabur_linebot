@@ -14,7 +14,6 @@ def get_chw_info():
     options.add_argument('--headless')
     options.add_argument('--disable-dev-shm-usage')
 
-    # 从环境变量获取ChromeDriver路径
     chromedriver_path = os.getenv('CHROMEDRIVER_PATH', '/app/.chromedriver/bin/chromedriver')
     google_chrome_bin_path = os.getenv('GOOGLE_CHROME_BIN', '/app/.apt/usr/bin/google-chrome')
 

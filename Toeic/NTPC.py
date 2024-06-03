@@ -14,7 +14,6 @@ def get_ntpc_info():
     options.add_argument('--headless')
     options.add_argument('--disable-dev-shm-usage')
 
-    # 从环境变量获取ChromeDriver路径
     chromedriver_path = os.getenv('CHROMEDRIVER_PATH', '/app/.chromedriver/bin/chromedriver')
     google_chrome_bin_path = os.getenv('GOOGLE_CHROME_BIN', '/app/.apt/usr/bin/google-chrome')
 
@@ -57,5 +56,4 @@ if __name__ == "__main__":
         print(f"報名狀態: {info['registration_status']}")
     else:
         print("无法获取考试信息。")
-
 
