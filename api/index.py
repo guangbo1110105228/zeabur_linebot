@@ -1,11 +1,10 @@
+import logging
 from flask import Flask, request, abort
-from linebot import LineBotApi, WebhookHandler
-from linebot.exceptions import InvalidSignatureError
-from linebot.models import *
-import openai
+from linebot.v3.messaging import LineBotApi
+from linebot.v3.webhook import WebhookHandler, FollowEvent, MessageEvent
+from linebot.v3.messaging.models import TextMessage, TextSendMessage, FlexSendMessage
 from openai import OpenAI
 import json
-import logging
 import os
 
 # Setup logging
@@ -23,20 +22,22 @@ handler = WebhookHandler(WEBHOOK_HANDLER)
 
 # Create a single Flask instance
 app = Flask(__name__)
+
 def GPT_response(text):
     try:
-        response = client.chat.completions.create(
+        response = client.chat_completions.create(
             model="gpt-3.5-turbo",
             messages=[
-            {
-            "role": "user",
-            "content": "Say this is a test",
-            },
+                {
+                    "role": "user",
+                    "content": text
+                },
             ],
         )
-        logging.info(f"GPT-3 response: {response.choices[0].message.content}")
+        logging.info(f"GPT-3 response: {response.choices[0]['message']['content']}")
         return response['choices'][0]['message']['content'].strip()
     except Exception as e:
+        logging.error(f"GPT error: {e}")
         return "gpt error."
 
 @app.route("/", methods=['GET'])
@@ -55,6 +56,7 @@ def callback():
         abort(400, description="Invalid signature. Please check your channel access token/channel secret.")
     except Exception as e:
         app.logger.error(f"Exception: {e}")
+        abort(400, description="Exception occurred.")
     return 'OK'
 
 # Handle FollowEvent
@@ -82,11 +84,12 @@ def handle_follow(event):
     line_bot_api.push_message(user_id, instruction_message)
 
 # Handle MessageEvent
-@handler.add(MessageEvent)
+@handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     reply_token = event.reply_token
     message = event.message.text
     logging.info(f"Received message: {message}")
+
     if message.upper() == 'HI':
         try:
             with open('carousel.json', 'r', encoding='utf-8') as file:
@@ -99,13 +102,20 @@ def handle_message(event):
             line_bot_api.reply_message(reply_token, TextSendMessage(text="Error: Flex message file is not valid JSON."))
         except Exception as e:
             line_bot_api.reply_message(reply_token, TextSendMessage(text="An error occurred while loading the flex messages."))
+    elif message == "Please provide the latest TOEFL test centers and times.":
+        toefl_info = "Here are the latest TOEFL test centers and times:\n1. Center A - June 10, 2024\n2. Center B - June 15, 2024\n3. Center C - June 20, 2024"
+        line_bot_api.reply_message(reply_token, TextSendMessage(text=toefl_info))
+    elif message == "The latest IELTS test centers and times.":
+        ielts_info = "Here are the latest IELTS test centers and times:\n1. Center D - June 12, 2024\n2. Center E - June 17, 2024\n3. Center F - June 22, 2024"
+        line_bot_api.reply_message(reply_token, TextSendMessage(text=ielts_info))
     else:
         try:
             gpt_answer = GPT_response(message)
-            line_bot_api.reply_message(reply_token, TextSendMessage(text="apple"))
+            line_bot_api.reply_message(reply_token, TextSendMessage(text=gpt_answer))
         except Exception as e:
-            line_bot_api.reply_message(reply_token, TextSendMessage(text="bpple."))
+            logging.error(f"Error handling message: {e}")
+            line_bot_api.reply_message(reply_token, TextSendMessage(text="An error occurred while generating the response."))
 
 if __name__ == "__main__":
     port = int(os.getenv('PORT', 5000))
-    # app.run(host='0.0.0.0', port=port)
+    app.run(host='0.0.0.0', port=port)
