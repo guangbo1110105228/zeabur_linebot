@@ -14,6 +14,7 @@ def get_toefl_info():
     chrome_options.add_argument("--disable-gpu")
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.binary_location = "/usr/bin/google-chrome"
 
     driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=chrome_options)
     driver.get("https://v2.ereg.ets.org/ereg/public/workflowmanager/schlWorkflow?_p=TEL")
@@ -83,3 +84,4 @@ if __name__ == "__main__":
         print(f"最新考試日期: {date_info}\n地區位置: {direction_link}")
     else:
         print("无法获取最新考试信息。")
+
