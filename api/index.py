@@ -11,9 +11,9 @@ import os
 from Toefl.kaos import get_toefl_info as get_kaohsiung_info
 from Toefl.taichung import get_toefl_info as get_taichung_info
 from Toefl.taipei import get_toefl_info as get_taipei_info
-from Toeic.CHW import get_chw_info
 from Toeic.NTPC import get_ntpc_info
 from Toeic.TVN import get_tvn_info
+from Toeic.CHW import get_chw_info
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -131,23 +131,23 @@ def handle_message(event):
         
         line_bot_api.reply_message(reply_token, TextSendMessage(text=response_message))
     elif message == "The latest IELTS test centers and times.":
-        chw_info = get_chw_info()
         ntpc_info = get_ntpc_info()
         tvn_info = get_tvn_info()
+        chw_info = get_chw_info()
         
-        response_message = "最新IELTS考試資訊：\n\n"
+        response_message = "最新考試資訊：\n\n"
         
-        if chw_info:
-            response_message += f"中彰投：\n考試日期: {chw_info.get('exam_date', '無信息')}\n報名期間: {chw_info.get('registration_period', '無信息')}\n追加報名期間: {chw_info.get('additional_registration_period', '無信息')}\n報名狀態: {chw_info.get('registration_status', '無信息')}\n\n"
+        if ntpc_info['exam_date'] and ntpc_info['registration_period']:
+            response_message += f"考試日期: {ntpc_info['exam_date']}\n報名期間: {ntpc_info['registration_period']}\n追加報名期間: {ntpc_info['additional_registration_period']}\n報名狀態: {ntpc_info['registration_status']}\n\n"
         
-        if ntpc_info:
-            response_message += f"北北基宜：\n考試日期: {ntpc_info.get('exam_date', '無信息')}\n報名期間: {ntpc_info.get('registration_period', '無信息')}\n追加報名期間: {ntpc_info.get('additional_registration_period', '無信息')}\n報名狀態: {ntpc_info.get('registration_status', '無信息')}\n\n"
+        if tvn_info['exam_date'] and tvn_info['registration_period']:
+            response_message += f"考試日期: {tvn_info['exam_date']}\n報名期間: {tvn_info['registration_period']}\n追加報名期間: {tvn_info['additional_registration_period']}\n報名狀態: {tvn_info['registration_status']}\n\n"
         
-        if tvn_info:
-            response_message += f"桃竹苗：\n考試日期: {tvn_info.get('exam_date', '無信息')}\n報名期間: {tvn_info.get('registration_period', '無信息')}\n追加報名期間: {tvn_info.get('additional_registration_period', '無信息')}\n報名狀態: {tvn_info.get('registration_status', '無信息')}\n\n"
-        
-        if not chw_info and not ntpc_info and not tvn_info:
-            response_message = "无法获取最新考試信息。"
+        if chw_info['exam_date'] and chw_info['registration_period']:
+            response_message += f"考試日期: {chw_info['exam_date']}\n報名期間: {chw_info['registration_period']}\n追加報名期間: {chw_info['additional_registration_period']}\n報名狀態: {chw_info['registration_status']}\n\n"
+
+        if not (ntpc_info['exam_date'] and ntpc_info['registration_period']) and not (tvn_info['exam_date'] and tvn_info['registration_period']) and not (chw_info['exam_date'] and chw_info['registration_period']):
+            response_message = "无法获取最新考试信息。"
         
         line_bot_api.reply_message(reply_token, TextSendMessage(text=response_message))
     else:
