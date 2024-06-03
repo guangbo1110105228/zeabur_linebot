@@ -1,8 +1,8 @@
 import logging
 from flask import Flask, request, abort
-from linebot.v3.messaging import LineBotApi
-from linebot.v3.webhook import WebhookHandler, FollowEvent, MessageEvent
-from linebot.v3.messaging.models import TextMessage, TextSendMessage, FlexSendMessage
+from linebot import LineBotApi, WebhookHandler
+from linebot.exceptions import InvalidSignatureError
+from linebot.models import FollowEvent, MessageEvent, TextMessage, TextSendMessage, FlexSendMessage
 from openai import OpenAI
 import json
 import os
@@ -119,3 +119,4 @@ def handle_message(event):
 if __name__ == "__main__":
     port = int(os.getenv('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
+
