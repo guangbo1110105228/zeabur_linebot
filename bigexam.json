@@ -58,7 +58,7 @@
           "action": {
             "type": "uri",
             "label": "Latest test",
-            "uri": "https://linecorp.com"
+            "uri": "https://xiaoshengli.pages.dev/gsatcountdown"
           }
         },
         {
@@ -67,8 +67,8 @@
           "height": "sm",
           "action": {
             "type": "uri",
-            "label": "Latest test",
-            "uri": "https://xiaoshengli.pages.dev/gsatcountdown"
+            "label": "Website",
+            "uri": "https://www.ceec.edu.tw/"
           }
         },
         {
