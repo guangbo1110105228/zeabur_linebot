@@ -34,7 +34,7 @@ app = Flask(__name__)
 def GPT_response(text):
     try:
         response = openai.Completion.create(
-            engine="davinci-codex",
+            engine="davinci",
             prompt=text,
             max_tokens=150
         )
