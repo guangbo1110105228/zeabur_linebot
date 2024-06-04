@@ -126,7 +126,7 @@ def handle_message(event):
             response_message = "无法获取最新考试信息。"
         
         line_bot_api.reply_message(reply_token, TextSendMessage(text=response_message))
-    elif message == "The latest IELTS test centers and times.":
+    elif message == "The latest Toeic test centers and times.":
         ntpc_info = get_ntpc_info()
         tvn_info = get_tvn_info()
         chw_info = get_chw_info()
