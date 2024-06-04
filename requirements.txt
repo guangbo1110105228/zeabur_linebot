@@ -3,5 +3,5 @@ Werkzeug==2.0.1
 line-bot-sdk==3.11.0
 openai==0.28
 gunicorn==22.0.0
-selenium==4.1.0
+selenium==4.10.0  # Use a version compatible with urllib3>=2.0.5
 webdriver-manager==4.0.1
