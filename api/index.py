@@ -7,6 +7,14 @@ import openai
 import json
 import os
 
+# Import TOEIC and TOEFL info functions
+from Toefl.kaos import get_toefl_info as get_kaohsiung_info
+from Toefl.taichung import get_toefl_info as get_taichung_info
+from Toefl.taipei import get_toefl_info as get_taipei_info
+from Toeic.NTPC import get_ntpc_info
+from Toeic.TVN import get_tvn_info
+from Toeic.CHW import get_chw_info
+
 # Setup logging
 logging.basicConfig(level=logging.INFO)
 
@@ -22,6 +30,18 @@ handler = WebhookHandler(WEBHOOK_HANDLER)
 
 # Create a single Flask instance
 app = Flask(__name__)
+
+def GPT_response(messages):
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=messages
+        )
+        logging.info(f"GPT-3 response: {response.choices[0]['message']['content'].strip()}")
+        return response.choices[0]['message']['content'].strip()
+    except Exception as e:
+        logging.error(f"GPT error: {e}")
+        return "gpt error."
 
 @app.route("/", methods=['GET'])
 def home():
@@ -55,51 +75,16 @@ def handle_follow(event):
             carousel_message = json.load(file)
 
         line_bot_api.push_message(user_id, FlexSendMessage(alt_text="Information Cards", contents=carousel_message))
-    except FileNotFoundError as e:
+    except FileNotFoundError:
         line_bot_api.push_message(user_id, TextSendMessage(text="Error: Flex message file not found."))
-    except json.JSONDecodeError as e:
+    except json.JSONDecodeError:
         line_bot_api.push_message(user_id, TextSendMessage(text="Error: Flex message file is not valid JSON."))
-    except Exception as e:
+    except Exception:
         line_bot_api.push_message(user_id, TextSendMessage(text="An error occurred while loading the flex messages."))
     
     # 指示訊息
     instruction_message = TextSendMessage(text="如果您需要這些資訊，請隨時輸入 'HI' 來獲取。")
     line_bot_api.push_message(user_id, instruction_message)
-
-# Define TOEFL and TOEIC information retrieval functions
-def get_toefl_info():
-    kaohsiung_info = get_kaohsiung_info()
-    taichung_info = get_taichung_info()
-    taipei_info = get_taipei_info()
-
-    response_message = "最新考試資訊：\n\n"
-    if kaohsiung_info[0] and kaohsiung_info[1]:
-        response_message += f"高雄市：\n日期: {kaohsiung_info[0]}\n地區位置: {kaohsiung_info[1]}\n\n"
-    if taichung_info[0] and taichung_info[1]:
-        response_message += f"台中市：\n日期: {taichung_info[0]}\n地區位置: {taichung_info[1]}\n\n"
-    if taipei_info[0] and taipei_info[1]:
-        response_message += f"台北市：\n日期: {taipei_info[0]}\n地區位置: {taipei_info[1]}\n\n"
-    if not response_message.strip():
-        response_message = "无法获取最新考试信息。"
-    
-    return response_message
-
-def get_toeic_info():
-    ntpc_info = get_ntpc_info()
-    tvn_info = get_tvn_info()
-    chw_info = get_chw_info()
-
-    response_message = "最新考試資訊：\n\n"
-    if ntpc_info and ntpc_info.get('exam_date') and ntpc_info.get('registration_period'):
-        response_message += f"新北市：\n日期: {ntpc_info['exam_date']}\n報名期間: {ntpc_info['registration_period']}\n追加報名期間: {ntpc_info['additional_registration_period']}\n報名狀態: {ntpc_info['registration_status']}\n\n"
-    if tvn_info and tvn_info.get('exam_date') and tvn_info.get('registration_period'):
-        response_message += f"桃竹苗：\n日期: {tvn_info['exam_date']}\n報名期間: {tvn_info['registration_period']}\n追加報名期間: {tvn_info['additional_registration_period']}\n報名狀態: {tvn_info['registration_status']}\n\n"
-    if chw_info and chw_info.get('exam_date') and chw_info.get('registration_period'):
-        response_message += f"中彰投：\n日期: {chw_info['exam_date']}\n報名期間: {chw_info['registration_period']}\n追加報名期間: {chw_info['additional_registration_period']}\n報名狀態: {chw_info['registration_status']}\n\n"
-    if not response_message.strip():
-        response_message = "无法获取最新考试信息。"
-    
-    return response_message
 
 # Handle MessageEvent
 @handler.add(MessageEvent, message=TextMessage)
@@ -109,32 +94,67 @@ def handle_message(event):
     user_id = event.source.user_id
     logging.info(f"Received message: {message}")
 
+    # Fetch the chat history from a simple JSON file (replace with your preferred storage)
+    user_chat_path = f"chat_{user_id}.json"
+    try:
+        with open(user_chat_path, 'r', encoding='utf-8') as file:
+            messages = json.load(file)
+    except (FileNotFoundError, json.JSONDecodeError):
+        messages = []
+
     if message.upper() == 'HI':
         try:
             with open('carousel.json', 'r', encoding='utf-8') as file:
                 carousel_message = json.load(file)
+
             line_bot_api.reply_message(reply_token, FlexSendMessage(alt_text="Information Cards", contents=carousel_message))
-        except FileNotFoundError as e:
+        except FileNotFoundError:
             line_bot_api.reply_message(reply_token, TextSendMessage(text="Error: Flex message file not found."))
-        except json.JSONDecodeError as e:
+        except json.JSONDecodeError:
             line_bot_api.reply_message(reply_token, TextSendMessage(text="Error: Flex message file is not valid JSON."))
-        except Exception as e:
+        except Exception:
             line_bot_api.reply_message(reply_token, TextSendMessage(text="An error occurred while loading the flex messages."))
     elif message == "Please provide the latest TOEFL test centers and times.":
-        response_message = get_toefl_info()
+        kaohsiung_info = get_kaohsiung_info()
+        taichung_info = get_taichung_info()
+        taipei_info = get_taipei_info()
+        
+        response_message = "最新考試資訊：\n\n"
+        
+        if kaohsiung_info:
+            response_message += f"高雄市：\n日期: {kaohsiung_info[0]}\n地區位置: {kaohsiung_info[1]}\n\n"
+        
+        if taichung_info:
+            response_message += f"台中市：\n日期: {taichung_info[0]}\n地區位置: {taichung_info[1]}\n\n"
+        
+        if taipei_info:
+            response_message += f"台北市：\n日期: {taipei_info[0]}\n地區位置: {taipei_info[1]}\n\n"
+
+        if not kaohsiung_info and not taichung_info and not taipei_info:
+            response_message = "无法获取最新考试信息。"
+        
         line_bot_api.reply_message(reply_token, TextSendMessage(text=response_message))
     elif message == "The latest Toeic test centers and times.":
-        response_message = get_toeic_info()
+        ntpc_info = get_ntpc_info()
+        tvn_info = get_tvn_info()
+        chw_info = get_chw_info()
+        
+        response_message = "最新考試資訊：\n\n"
+        
+        if ntpc_info:
+            response_message += f"新北市：\n日期: {ntpc_info[0]}\n報名期間: {ntpc_info[1]}\n追加報名期間: {ntpc_info[2]}\n報名狀態: {ntpc_info[3]}\n\n"
+        
+        if tvn_info:
+            response_message += f"桃竹苗：\n日期: {tvn_info[0]}\n報名期間: {tvn_info[1]}\n追加報名期間: {tvn_info[2]}\n報名狀態: {tvn_info[3]}\n\n"
+        
+        if chw_info:
+            response_message += f"中彰投：\n日期: {chw_info[0]}\n報名期間: {chw_info[1]}\n追加報名期間: {chw_info[2]}\n報名狀態: {chw_info[3]}\n\n"
+
+        if not ntpc_info and not tvn_info and not chw_info:
+            response_message = "无法获取最新考试信息。"
+        
         line_bot_api.reply_message(reply_token, TextSendMessage(text=response_message))
     else:
-        # Fetch the chat history from a simple JSON file (replace with your preferred storage)
-        user_chat_path = f"chat_{user_id}.json"
-        try:
-            with open(user_chat_path, 'r', encoding='utf-8') as file:
-                messages = json.load(file)
-        except (FileNotFoundError, json.JSONDecodeError):
-            messages = []
-
         if message == '!清空':
             messages = []
             response_message = "對話歷史紀錄已經清空！"
