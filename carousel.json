@@ -5,7 +5,7 @@
       "type": "bubble",
       "hero": {
         "type": "image",
-        "url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQND7xaDN8za7OxvMfvEZMWHtOc94Y08xoA4cbntwfzLQ&s",
+        "url": "https://www.ukus.tw/public/images/toefl_263px_v1.png",
         "size": "full",
         "aspectRatio": "20:13",
         "aspectMode": "cover",
@@ -20,7 +20,7 @@
         "contents": [
           {
             "type": "text",
-            "text": "學測大考中心",
+            "text": "TOEFL",
             "weight": "bold",
             "size": "xl"
           },
@@ -59,9 +59,9 @@
             "style": "link",
             "height": "sm",
             "action": {
-              "type": "uri",
-              "label": "Latest test",
-              "uri": "https://xiaoshengli.pages.dev/gsatcountdown"
+              "type": "message",
+              "label": "Latest Test",
+              "text": "Please provide the latest TOEFL test centers and times."
             }
           },
           {
@@ -71,7 +71,7 @@
             "action": {
               "type": "uri",
               "label": "Website",
-              "uri": "https://www.ceec.edu.tw/"
+              "uri": "https://www.ets.org/bin/getprogram.cgi?test=toefl"
             }
           },
           {
@@ -171,7 +171,7 @@
       "type": "bubble",
       "hero": {
         "type": "image",
-        "url": "https://www.ukus.tw/public/images/toefl_263px_v1.png",
+        "url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQND7xaDN8za7OxvMfvEZMWHtOc94Y08xoA4cbntwfzLQ&s",
         "size": "full",
         "aspectRatio": "20:13",
         "aspectMode": "cover",
@@ -186,7 +186,7 @@
         "contents": [
           {
             "type": "text",
-            "text": "TOEFL",
+            "text": "學測大考中心",
             "weight": "bold",
             "size": "xl"
           },
@@ -225,9 +225,9 @@
             "style": "link",
             "height": "sm",
             "action": {
-              "type": "message",
-              "label": "Latest Test",
-              "text": "Please provide the latest TOEFL test centers and times."
+              "type": "uri",
+              "label": "Latest test",
+              "uri": "https://xiaoshengli.pages.dev/gsatcountdown"
             }
           },
           {
@@ -237,7 +237,7 @@
             "action": {
               "type": "uri",
               "label": "Website",
-              "uri": "https://www.ets.org/bin/getprogram.cgi?test=toefl"
+              "uri": "https://www.ceec.edu.tw/"
             }
           },
           {
@@ -252,5 +252,3 @@
     }
   ]
 }
-
-  
