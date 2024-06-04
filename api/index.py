@@ -8,12 +8,12 @@ import json
 import os
 
 # 导入各个爬虫文件中的函数
-from Toefl.kaos import get_toefl_info as get_kaohsiung_info
-from Toefl.taichung import get_toefl_info as get_taichung_info
-from Toefl.taipei import get_toefl_info as get_taipei_info
 from Toeic.NTPC import get_ntpc_info
 from Toeic.TVN import get_tvn_info
 from Toeic.CHW import get_chw_info
+from Toefl.kaos import get_toefl_info as get_kaohsiung_info
+from Toefl.taichung import get_toefl_info as get_taichung_info
+from Toefl.taipei import get_toefl_info as get_taipei_info
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)

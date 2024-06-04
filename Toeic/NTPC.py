@@ -8,7 +8,7 @@ from selenium.webdriver.chrome.options import Options
 import time
 import os
 
-def get_toeic_info():
+def get_ntpc_info():
     chrome_options = Options()
     chrome_options.add_argument("--headless")
     chrome_options.add_argument("--disable-gpu")

@@ -8,7 +8,7 @@ from selenium.webdriver.chrome.options import Options
 import time
 import os
 
-def get_toeic_info():
+def get_chw_info():
     chrome_options = Options()
     chrome_options.add_argument("--headless")
     chrome_options.add_argument("--disable-gpu")
@@ -81,7 +81,7 @@ def get_toeic_info():
                         return False  # 報名截止
                     else:
                         registration_link = online_registration_cell.find_element(By.TAG_NAME, 'a')
-                        registration_url = registration_link.getAttribute("href")
+                        registration_url = registration_link.get_attribute("href")
                         print("線上報名連結:", registration_url)
                         time.sleep(5)
                         return True  # 找到有效報名連結
@@ -100,5 +100,5 @@ def get_toeic_info():
             driver.quit()
 
 if __name__ == "__main__":
-    get_toeic_info()
+    get_chw_info()
 
