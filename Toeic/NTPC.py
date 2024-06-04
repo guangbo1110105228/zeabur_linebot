@@ -53,7 +53,8 @@ def get_ntpc_info():
                     date_elements = date_info_element.find_elements(By.TAG_NAME, 'span')
                     month = date_elements[0].text.strip()
                     day = date_elements[2].text.strip()
-                    print("考試日期:", month, "/", day)
+                    exam_date = f"{month} / {day}"
+                    print("考試日期:", exam_date)
                     time.sleep(5)
 
                     registration_cell = WebDriverWait(driver, 10).until(
@@ -71,33 +72,49 @@ def get_ntpc_info():
                         additional_registration_period_text = ' '.join(span.text.strip() for span in additional_date_spans[:3])
                         print("追加報名期間:", additional_registration_period_text)
                     except Exception:
-                        print("無追加報名期間")
+                        additional_registration_period_text = "無追加報名期間"
+                        print(additional_registration_period_text)
 
                     online_registration_cell = table.find_element(By.XPATH, ".//td[@data-title='線上報名']")
                     registration_status_elements = online_registration_cell.find_elements(By.XPATH, ".//p[@class='table-status']")
                     if registration_status_elements:
-                        print("報名截止")
+                        registration_status = "報名截止"
+                        print(registration_status)
                         time.sleep(5)
-                        return False  # 報名截止
                     else:
                         registration_link = online_registration_cell.find_element(By.TAG_NAME, 'a')
                         registration_url = registration_link.get_attribute("href")
-                        print("線上報名連結:", registration_url)
+                        registration_status = f"線上報名連結: {registration_url}"
+                        print(registration_status)
                         time.sleep(5)
-                        return True  # 找到有效報名連結
+                    
+                    return {
+                        'exam_date': exam_date,
+                        'registration_period': registration_period_text,
+                        'additional_registration_period': additional_registration_period_text,
+                        'registration_status': registration_status
+                    }
 
                 except Exception as e:
                     print('Error:', e)
-                    return False  # 處理下一個表格
+                    return None  # 處理下一個表格
 
             for table in tables:
-                if process_table(table):
-                    break  # 找到有效報名連結
+                result = process_table(table)
+                if result:
+                    return result
 
         except Exception as e:
             print(f"Error occurred: {e}")
+            return None
         finally:
             driver.quit()
 
+# 確保該文件在被導入時執行的是測試而非抓取
 if __name__ == "__main__":
-    get_toeic_info()
+    info = get_ntpc_info()
+    if info:
+        print(info)
+    else:
+        print("未能獲取考試資訊。")
+

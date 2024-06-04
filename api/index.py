@@ -137,16 +137,16 @@ def handle_message(event):
         
         response_message = "最新考試資訊：\n\n"
         
-        if ntpc_info['exam_date'] and ntpc_info['registration_period']:
-            response_message += f"考試日期: {ntpc_info['exam_date']}\n報名期間: {ntpc_info['registration_period']}\n追加報名期間: {ntpc_info['additional_registration_period']}\n報名狀態: {ntpc_info['registration_status']}\n\n"
+        if ntpc_info and ntpc_info.get('exam_date') and ntpc_info.get('registration_period'):
+            response_message += f"新北市：\n日期: {ntpc_info['exam_date']}\n報名期間: {ntpc_info['registration_period']}\n追加報名期間: {ntpc_info['additional_registration_period']}\n報名狀態: {ntpc_info['registration_status']}\n\n"
         
-        if tvn_info['exam_date'] and tvn_info['registration_period']:
-            response_message += f"考試日期: {tvn_info['exam_date']}\n報名期間: {tvn_info['registration_period']}\n追加報名期間: {tvn_info['additional_registration_period']}\n報名狀態: {tvn_info['registration_status']}\n\n"
+        if tvn_info and tvn_info.get('exam_date') and tvn_info.get('registration_period'):
+            response_message += f"桃竹苗：\n日期: {tvn_info['exam_date']}\n報名期間: {tvn_info['registration_period']}\n追加報名期間: {tvn_info['additional_registration_period']}\n報名狀態: {tvn_info['registration_status']}\n\n"
         
-        if chw_info['exam_date'] and chw_info['registration_period']:
-            response_message += f"考試日期: {chw_info['exam_date']}\n報名期間: {chw_info['registration_period']}\n追加報名期間: {chw_info['additional_registration_period']}\n報名狀態: {chw_info['registration_status']}\n\n"
+        if chw_info and chw_info.get('exam_date') and chw_info.get('registration_period'):
+            response_message += f"中彰投：\n日期: {chw_info['exam_date']}\n報名期間: {chw_info['registration_period']}\n追加報名期間: {chw_info['additional_registration_period']}\n報名狀態: {chw_info['registration_status']}\n\n"
 
-        if not (ntpc_info['exam_date'] and ntpc_info['registration_period']) and not (tvn_info['exam_date'] and tvn_info['registration_period']) and not (chw_info['exam_date'] and chw_info['registration_period']):
+        if not (ntpc_info and ntpc_info.get('exam_date') and ntpc_info.get('registration_period')) and not (tvn_info and tvn_info.get('exam_date') and tvn_info.get('registration_period')) and not (chw_info and chw_info.get('exam_date') and chw_info.get('registration_period')):
             response_message = "无法获取最新考试信息。"
         
         line_bot_api.reply_message(reply_token, TextSendMessage(text=response_message))
@@ -161,4 +161,7 @@ def handle_message(event):
 if __name__ == "__main__":
     port = int(os.getenv('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
+
+
+
 
