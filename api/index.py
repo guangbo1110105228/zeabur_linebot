@@ -33,17 +33,13 @@ app = Flask(__name__)
 
 def GPT_response(text):
     try:
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {
-                    "role": "user",
-                    "content": text
-                },
-            ],
+        response = openai.Completion.create(
+            model="text-davinci-003",
+            prompt=text,
+            max_tokens=150
         )
-        logging.info(f"GPT-3 response: {response.choices[0]['message']['content']}")
-        return response.choices[0]['message']['content'].strip()
+        logging.info(f"GPT-3 response: {response.choices[0]['text']}")
+        return response.choices[0]['text'].strip()
     except Exception as e:
         logging.error(f"GPT error: {e}")
         return "gpt error."
@@ -161,6 +157,7 @@ def handle_message(event):
 if __name__ == "__main__":
     port = int(os.getenv('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
+
 
 
 

@@ -88,7 +88,7 @@
       "type": "bubble",
       "hero": {
         "type": "image",
-        "url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSaMNqZ6OqQz7RCiRc2WuEfgcRYHIAP3NLfjlL4KFiVgA&s",
+        "url": "https://www.ukus.tw/public/images/toeic_263px_v1.png",
         "size": "full",
         "aspectRatio": "20:13",
         "aspectMode": "cover",
@@ -103,7 +103,7 @@
         "contents": [
           {
             "type": "text",
-            "text": "雅思",
+            "text": "Toeic",
             "weight": "bold",
             "size": "xl"
           },
@@ -144,7 +144,7 @@
             "action": {
               "type": "message",
               "label": "Latest Test",
-              "text": "The latest IELTS test centers and times."
+              "text": "The latest Toeic test centers and times."
             }
           },
           {
@@ -154,7 +154,7 @@
             "action": {
               "type": "uri",
               "label": "Website",
-              "uri": "https://tw.ieltsasia.org/"
+              "uri": "https://www.toeic.com.tw/"
             }
           },
           {
