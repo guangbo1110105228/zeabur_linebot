@@ -3,7 +3,7 @@ from flask import Flask, request, abort
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import FollowEvent, MessageEvent, TextMessage, TextSendMessage, FlexSendMessage
-from openai import OpenAI
+import openai
 import json
 import os
 
@@ -22,7 +22,7 @@ logging.basicConfig(level=logging.INFO)
 LINE_BOT_API = os.getenv('LINE_BOT_API')
 WEBHOOK_HANDLER = os.getenv('WEBHOOK_HANDLER')
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
-client = OpenAI(api_key=OPENAI_API_KEY)
+openai.api_key = OPENAI_API_KEY
 
 # Initialize LineBot API and WebhookHandler with environment variables
 line_bot_api = LineBotApi(LINE_BOT_API)
@@ -33,17 +33,13 @@ app = Flask(__name__)
 
 def GPT_response(text):
     try:
-        response = client.chat_completions.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {
-                    "role": "user",
-                    "content": text
-                },
-            ],
+        response = openai.Completion.create(
+            engine="davinci",
+            prompt=text,
+            max_tokens=150
         )
-        logging.info(f"GPT-3 response: {response.choices[0]['message']['content']}")
-        return response['choices'][0]['message']['content'].strip()
+        logging.info(f"GPT-3 response: {response.choices[0].text.strip()}")
+        return response.choices[0].text.strip()
     except Exception as e:
         logging.error(f"GPT error: {e}")
         return "gpt error."
