@@ -31,13 +31,13 @@ handler = WebhookHandler(WEBHOOK_HANDLER)
 # Create a single Flask instance
 app = Flask(__name__)
 
-def GPT_response(messages, model="gpt-4"):
+def GPT_response(messages):
     try:
         response = openai.ChatCompletion.create(
-            model=model,
+            model="gpt-3.5-turbo",
             messages=messages
         )
-        logging.info(f"GPT-4 response: {response.choices[0]['message']['content'].strip()}")
+        logging.info(f"GPT-3 response: {response.choices[0]['message']['content'].strip()}")
         return response.choices[0]['message']['content'].strip()
     except Exception as e:
         logging.error(f"GPT error: {e}")
@@ -154,9 +154,10 @@ def handle_message(event):
             response_message = "无法获取最新考试信息。"
         
         line_bot_api.reply_message(reply_token, TextSendMessage(text=response_message))
+        
     elif message == "呼叫客服":
         response_message = "已呼叫客服，稍後將有專人與您聯繫。"
-        line_bot_api.reply_message(reply_token, TextSendMessage(text=response_message))
+        
     else:
         if message == '!清空':
             messages = []
@@ -164,12 +165,18 @@ def handle_message(event):
         else:
             messages.append({"role": "user", "content": message})
             try:
-                response = GPT_response(messages, model="gpt-4")
-                messages.append({"role": "assistant", "content": response})
-                response_message = response
+                response = openai.ChatCompletion.create(
+                    model="gpt-4",
+                    messages=messages
+                )
+                ai_message = response.choices[0].message['content'].strip()
+                messages.append({"role": "assistant", "content": ai_message})
+                response_message = ai_message
             except Exception as e:
                 logging.error(f"GPT error: {e}")
                 response_message = "An error occurred while generating the response."
+                
+        
 
         # Save the chat history
         with open(user_chat_path, 'w', encoding='utf-8') as file:
@@ -180,5 +187,3 @@ def handle_message(event):
 if __name__ == "__main__":
     port = int(os.getenv('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
-
-
