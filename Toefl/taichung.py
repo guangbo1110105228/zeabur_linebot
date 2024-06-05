@@ -84,4 +84,4 @@ if __name__ == "__main__":
     if date_info and direction_link:
         print(f"最新考試日期: {date_info}\n地區位置: {direction_link}")
     else:
-        print("无法获取最新考试信息。")
+        print("未能獲取考試資訊。")
